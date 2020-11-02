@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zyh.blog.dao.TypeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.zyh.blog.entity.Type">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+    </resultMap>
+
+<!--  博客前台展示：通过分类名称查询出所有分类以及该分类下博客数量并以博客数量倒序排列  -->
+    <select id="listTypeTop" resultType="com.zyh.blog.entity.Type">
+        SELECT t.`id`,t.`name`,COUNT(b.`id`)blogCount FROM `t_type` t
+        LEFT JOIN `t_blog` b ON t.`id` = b.`type_id`
+        GROUP BY t.`name`
+        ORDER BY blogCount DESC LIMIT #{size}
+    </select>
+
+</mapper>

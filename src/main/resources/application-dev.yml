@@ -1,0 +1,39 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://39.97.230.224:3306/blog_mybatisplus?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+
+  messages:
+    basename: i18n/messages
+
+  redis:
+    port: 6379
+    host: 39.97.230.224
+
+  cloud:
+    alicloud:
+      access-key: LTAI4FuY2o1znnqmLJp8f6oP
+      secret-key: XN3cPIfgRx7B7xKVUFuiM2i2y1EawU
+      oss:
+        endpoint: oss-cn-beijing.aliyuncs.com
+      bucketName: gmall-01-zyh
+
+
+
+mybatis-plus:
+  type-aliases-package: com.zyh.blog     # 取别名
+  mapper-locations: classpath:/mapper/*Mapper.xml
+
+logging:
+  level:
+    root: info                  # springboot本身的日志级别
+    com.zyh.blog: debug         # 指定com.zyh.blog包下的日志级别
+  file:
+    name: log/blog-dev.log      # 指定日志文件的位置
+
+comment.avatar: /images/yaml.jpg     # 自定义评论区的头像

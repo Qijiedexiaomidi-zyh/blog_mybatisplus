@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zyh.blog.dao.CommentMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.zyh.blog.entity.Comment">
+        <id column="id" property="id" />
+        <result column="avatar" property="avatar" />
+        <result column="content" property="content" />
+        <result column="create_date" property="createDate" />
+        <result column="email" property="email" />
+        <result column="nick_name" property="nickName" />
+        <result column="blog_id" property="blogId" />
+        <result column="parent_comment_id" property="parentCommentId" />
+        <result column="replied_nick_name" property="repliedNickName" />
+        <result column="admin_comment" property="adminComment" />
+    </resultMap>
+
+    <select id="findParentCommentNullByBlogId" resultMap="testMap">
+        select c.* from t_comment c
+        where c.parent_comment_id is null and c.blog_id = #{blogId}
+        order by c.create_date asc
+    </select>
+
+    <resultMap id="testMap" type="com.zyh.blog.entity.Comment" extends="BaseResultMap">
+        <collection property="childComments"
+                    ofType="com.zyh.blog.entity.Comment"
+                    select="findChildCommentsByBlogIdAndTopCommentId"
+                    column="id"/>
+    </resultMap>
+    <select id="findChildCommentsByBlogIdAndTopCommentId" resultType="com.zyh.blog.entity.Comment">
+        select c.* from t_comment c
+        where c.parent_comment_id = #{topCommentId} and c.blog_id = #{blogId}
+        order by c.create_date asc
+    </select>
+
+</mapper>

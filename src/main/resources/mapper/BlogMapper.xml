@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zyh.blog.dao.BlogMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.zyh.blog.entity.Blog">
+        <id column="id" property="id" />
+        <result column="appreciation" property="appreciation" />
+        <result column="commentabled" property="commentabled" />
+        <result column="content" property="content" />
+        <result column="create_date" property="createDate" />
+        <result column="update_date" property="updateDate" />
+        <result column="first_picture" property="firstPicture" />
+        <result column="flag" property="flag" />
+        <result column="user_id" property="userId" />
+        <result column="type_id" property="typeId" />
+        <result column="tag_ids" property="tagIds" />
+        <result column="published" property="published" />
+        <result column="recommend" property="recommend" />
+        <result column="share_statement" property="shareStatement" />
+        <result column="title" property="title" />
+        <result column="views" property="views" />
+        <result column="description" property="description" />
+    </resultMap>
+
+<!--  博客管理后台：根据分类名称、标题名称、是否被推荐分页查询博客列表  -->
+    <resultMap id="BlogMapByType" type="com.zyh.blog.entity.Blog" extends="BaseResultMap">
+        <association property="type" javaType="com.zyh.blog.entity.Type">
+        <!--将下面sql语句改过的别名作为column的值-->
+            <id column="tpId" property="id"/>
+            <result column="tpName" property="name"/>
+        </association>
+    </resultMap>
+    <select id="listBlogByCondition" resultMap="BlogMapByType">
+--                  t.id tpId,t.name tpName
+        select b.*,t.id tpId,t.name tpName from t_blog b
+        left join t_type t on b.type_id = t.id
+        <where>
+            <if test="blog.title != null and blog.title != ''">
+                and b.title like '%' #{blog.title} '%'
+            </if>
+            <if test="blog.typeId != null">
+                and b.type_id = #{blog.typeId}
+            </if>
+            <if test="blog.recommend != null and blog.recommend != ''">
+                and b.recommend = #{blog.recommend}
+            </if>
+        </where>
+        order by b.create_date desc
+    </select>
+
+<!--  博客前台展示：三表连接查询分页显示博客列表  -->
+    <resultMap id="BlogMapByUserAndType" type="com.zyh.blog.entity.Blog" extends="BaseResultMap">
+        <association property="user" javaType="com.zyh.blog.entity.User">
+            <id column="id" property="id"/>
+            <result column="avatar" property="avatar"/>
+            <result column="nick_name" property="nickName"/>
+            <result column="create_date" property="createDate"/>
+            <result column="update_date" property="updateDate"/>
+            <result column="email" property="email"/>
+            <result column="username" property="username"/>
+            <result column="password" property="password"/>
+            <result column="type" property="type"/>
+        </association>
+        <association property="type" javaType="com.zyh.blog.entity.Type">
+            <!--将下面sql语句改过的别名作为column的值-->
+            <id column="tpId" property="id"/>
+            <result column="tpName" property="name"/>
+        </association>
+    </resultMap>
+    <select id="listBlog" resultMap="BlogMapByUserAndType">
+        select b.*,u.nick_name,u.avatar,t.id tpId,t.name tpName from t_blog b
+        left join t_user u on b.user_id = u.id
+        left join t_type t on b.type_id = t.id
+    </select>
+
+<!--  博客前台展示：每浏览一次博客，浏览量+1  -->
+    <update id="updateBlogViews">
+        update t_blog b set b.views = b.views + 1 where id = #{id}
+    </update>
+
+<!--  博客前台显示：三表关联查询，顶部栏中的search多条件搜寻  -->
+    <select id="listBlogByquery" resultMap="BlogMapByUserAndType">
+        select b.*,u.nick_name,u.avatar,t.id tpId,t.name tpName from t_blog b
+        left join t_user u on b.user_id = u.id
+        left join t_type t on b.type_id = t.id
+        <where>
+            <if test="keyword != null and keyword != ''">
+                or b.title like '%' #{keyword} '%'
+            </if>
+            <if test="keyword != null and keyword != ''">
+                or b.content like '%' #{keyword} '%'
+            </if>
+            <if test="keyword != null and keyword != ''">
+                or t.name like '%' #{keyword} '%'
+            </if>
+        </where>
+    </select>
+
+<!--  博客前台显示：三表关联查询，查询每篇博客的内容  -->
+    <select id="findBlogById" resultMap="BlogMapByUserAndType">
+        select b.*,u.nick_name,u.avatar,t.id tpId,t.name tpName from t_blog b
+        left join t_user u on b.user_id = u.id
+        left join t_type t on b.type_id = t.id
+        where b.id = #{id}
+    </select>
+
+<!--  博客前台展示：三表连接查询，根据typeId查询出所有的博客  -->
+    <select id="listBlogByTypeId" resultMap="BlogMapByUserAndType">
+        select b.*,u.nick_name,u.avatar,t.id tpId,t.name tpName from t_blog b
+        left join t_user u on b.user_id = u.id
+        left join t_type t on b.type_id = t.id
+        where t.id = #{id}
+    </select>
+
+<!--  博客前台显示：五表连接查询根据tagId查询出来所属的所有博客  -->
+    <resultMap id="testMap" type="com.zyh.blog.entity.Blog" extends="BaseResultMap">
+        <association property="user" javaType="com.zyh.blog.entity.User">
+            <id column="id" property="id"/>
+            <result column="avatar" property="avatar"/>
+            <result column="nick_name" property="nickName"/>
+            <result column="create_date" property="createDate"/>
+            <result column="update_date" property="updateDate"/>
+            <result column="email" property="email"/>
+            <result column="username" property="username"/>
+            <result column="password" property="password"/>
+            <result column="type" property="type"/>
+        </association>
+        <association property="type" javaType="com.zyh.blog.entity.Type">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+        </association>
+        <collection property="tags" ofType="com.zyh.blog.entity.Tag">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+        </collection>
+    </resultMap>
+    <select id="listBlogByTagId" resultMap="testMap">
+        SELECT b.*,u.*,tg.*,tp.*,bt.*
+        FROM `t_blog` b,`t_user` u,`t_type` tp,`t_tag` tg,`t_blog_tags` bt
+        WHERE tg.`id` = #{id} AND b.`user_id` = u.`id` AND b.`type_id` = tp.`id` AND b.`id` = bt.`blog_id` AND bt.`tag_id` = tg.`id`
+    </select>
+
+<!--  博客前台展示：根据所有的博客数据，查询出所有的年份封装成一个集合  -->
+    <select id="findYearByBlog" resultType="java.lang.String">
+        SELECT DATE_FORMAT(b.`create_date`, '%Y') AS createDateByYear FROM `t_blog` b
+--         注意：这种调用MySQL函数，起完别名的字段也不能使用别名，会报错，找不到该字段
+        GROUP BY DATE_FORMAT(b.`create_date`, '%Y')
+        ORDER BY DATE_FORMAT(b.`create_date`, '%Y') DESC
+    </select>
+
+<!--  博客前台展示：根据年份，查询每一年所对应的所有博客数据  -->
+    <select id="findBlogByYear" resultMap="BlogMapByType">
+        select b.*,t.id tpId,t.name tpName,DATE_FORMAT(b.`create_date`, '%Y') AS createDateByYear from t_blog b
+        left join t_type t on b.type_id = t.id
+--         注意：这种调用MySQL函数，起完别名的字段也不能使用别名，会报错，找不到该字段
+        where DATE_FORMAT(b.`create_date`, '%Y') = #{year}
+    </select>
+
+    <select id="findTagIds" resultType="java.lang.String">
+        select b.tag_ids from t_blog b
+    </select>
+
+</mapper>

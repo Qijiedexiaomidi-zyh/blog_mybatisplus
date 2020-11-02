@@ -1,0 +1,16 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://39.97.230.224:3306/db_blog?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+    password: 123456
+
+logging:
+  level:
+    root: info                  # springboot本身的日志级别
+    com.zyh.blog: debug         # 指定com.zyh.blog包下的日志级别
+  file:
+    name: log/blog-dev.log      # 指定日志文件的位置
