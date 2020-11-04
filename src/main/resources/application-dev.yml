@@ -4,7 +4,7 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://39.97.230.224:3306/blog_mybatisplus?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://xxxxxxxxxx:3306/blog_mybatisplus?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     username: root
     password: 123456
 
@@ -13,15 +13,15 @@ spring:
 
   redis:
     port: 6379
-    host: 39.97.230.224
+    host: xxxxxxxxxxx
 
   cloud:
     alicloud:
-      access-key: LTAI4FuY2o1znnqmLJp8f6oP
-      secret-key: XN3cPIfgRx7B7xKVUFuiM2i2y1EawU
+      access-key: xxxxxxxxxxx
+      secret-key: xxxxxxxxxxx
       oss:
-        endpoint: oss-cn-beijing.aliyuncs.com
-      bucketName: gmall-01-zyh
+        endpoint: xxxxxxxxxxxxx
+      bucketName: xxxxxxxxxxxxx
 
 
 
